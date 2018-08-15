@@ -67,6 +67,9 @@ if [ "$?" -gt "0" ];
     echo "apt-add-repository -y ppa:bitcoin/bitcoin"
     echo "apt-get update"
     echo "apt install -y make build-essential libtool autotools-dev autoconf pkg-config libssl-dev libevent-dev libdb4.8-dev libdb4.8++-dev libminiupnpc-dev libboost-all-dev"
+    exit 1
+fi
+
 clear
 echo -e "Checking if swap space is needed."
 PHYMEM=$(free -g|awk '/^Mem:/{print $2}')
