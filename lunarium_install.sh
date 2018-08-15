@@ -3,7 +3,7 @@
 TMP_FOLDER=$(mktemp -d)
 CONFIG_FILE="lunarium.conf"
 LUNARIUM_DAEMON="/usr/local/bin/lunariumd"
-LUNARIUM_REPO="https://github.com/lunarium-community/lunarium.git"
+LUNARIUM_REPO="https://github.com/LunariumCoin/lunarium.git"
 DEFAULT_LUNARIUM_PORT=44071
 DEFAULT_LUNARIUM_RPC_PORT=44072
 DEFAULT_LUNARIUM_USER="lunarium"
@@ -55,24 +55,18 @@ echo -e "${GREEN}Adding bitcoin PPA repository"
 apt-add-repository -y ppa:bitcoin/bitcoin >/dev/null 2>&1
 echo -e "Installing required packages, it may take some time to finish.${NC}"
 apt-get update >/dev/null 2>&1
-apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" make software-properties-common \
-build-essential libtool autoconf libssl-dev libboost-dev libboost-chrono-dev libboost-filesystem-dev libboost-program-options-dev \
-libboost-system-dev libboost-test-dev libboost-thread-dev sudo automake git wget pwgen curl libdb4.8-dev bsdmainutils libdb4.8++-dev \
-libminiupnpc-dev libgmp3-dev ufw fail2ban >/dev/null 2>&1
+apt-get upgrade >/dev/null 2>&1
+apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" make build-essential libtool autotools-dev autoconf pkg-config libssl-dev libevent-dev libdb4.8-dev libdb4.8++-dev libminiupnpc-dev libboost-all-dev ufw fail2ban >/dev/null 2>&1
 clear
 if [ "$?" -gt "0" ];
   then
     echo -e "${RED}Not all required packages were installed properly. Try to install them manually by running the following commands:${NC}\n"
     echo "apt-get update"
+    echo "apt-get -y upgrade"
     echo "apt -y install software-properties-common"
     echo "apt-add-repository -y ppa:bitcoin/bitcoin"
     echo "apt-get update"
-    echo "apt install -y make build-essential libtool software-properties-common autoconf libssl-dev libboost-dev libboost-chrono-dev libboost-filesystem-dev \
-libboost-program-options-dev libboost-system-dev libboost-test-dev libboost-thread-dev sudo automake git pwgen curl libdb4.8-dev \
-bsdmainutils libdb4.8++-dev libminiupnpc-dev libgmp3-dev"
- exit 1
-fi
-
+    echo "apt install -y make build-essential libtool autotools-dev autoconf pkg-config libssl-dev libevent-dev libdb4.8-dev libdb4.8++-dev libminiupnpc-dev libboost-all-dev"
 clear
 echo -e "Checking if swap space is needed."
 PHYMEM=$(free -g|awk '/^Mem:/{print $2}')
@@ -97,11 +91,12 @@ function compile_lunarium() {
   echo -e "Clone git repo and compile it. This may take some time."
   cd $TMP_FOLDER
   git clone $LUNARIUM_REPO lunarium
-  cd lunarium/src
-  make -f makefile.unix
-  strip lunariumd
-  chmod +x lunariumd
-  cp -a lunariumd /usr/local/bin
+  cd lunarium
+  ./autogen.
+  ./configure
+  make
+  strip src/lunariumd src/lunarium-cli src/lunarium-tx
+  make install
   cd ~
   rm -rf $TMP_FOLDER
   clear
@@ -200,6 +195,12 @@ listen=1
 server=1
 daemon=1
 port=$LUNARIUM_PORT
+addnode=212.237.21.165
+addnode=212.237.8.42
+addnode=80.211.30.202
+addnode=80.211.83.188
+addnode=80.211.74.34
+addnode=212.237.24.82
 EOF
 }
 
