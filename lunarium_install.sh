@@ -95,7 +95,7 @@ function compile_lunarium() {
   cd $TMP_FOLDER
   git clone $LUNARIUM_REPO lunarium
   cd lunarium
-  ./autogen.
+  ./autogen.sh
   ./configure
   make
   strip src/lunariumd src/lunarium-cli src/lunarium-tx
