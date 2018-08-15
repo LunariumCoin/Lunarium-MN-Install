@@ -4,7 +4,7 @@ Shell script to install an [Lunarium Masternode](http://lunariumcoin.io/) on a L
 ***
 ## Installation:  
 
-wget -q https://raw.githubusercontent.com/LunariumCoin/Lunarium-MN-Install/master/lunarium_install.sh  
+wget -q https://raw.githubusercontent.com/LunariumCoin/Lunarium-MN-Install/master/lunarium_install.sh
 bash lunarium_install.sh
 ***
 
