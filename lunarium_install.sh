@@ -3,6 +3,7 @@
 TMP_FOLDER=$(mktemp -d)
 CONFIG_FILE="lunarium.conf"
 LUNARIUM_DAEMON="/usr/local/bin/lunariumd"
+LUNARIUM_CLI="/usr/local/bin/lunarium-cli"
 LUNARIUM_REPO="https://github.com/LunariumCoin/lunarium.git"
 DEFAULT_LUNARIUM_PORT=44071
 DEFAULT_LUNARIUM_RPC_PORT=44072
@@ -123,8 +124,8 @@ Description=Lunarium service
 After=network.target
 [Service]
 ExecStart=$LUNARIUM_DAEMON -conf=$LUNARIUM_FOLDER/$CONFIG_FILE -datadir=$LUNARIUM_FOLDER
-ExecStop=$LUNARIUM_DAEMON -conf=$LUNARIUM_FOLDER/$CONFIG_FILE -datadir=$LUNARIUM_FOLDER stop
-Restart=on-abort
+ExecStop=$LUNARIUM_CLI -conf=$LUNARIUM_FOLDER/$CONFIG_FILE -datadir=$LUNARIUM_FOLDER stop
+Restart=always
 User=$LUNARIUM_USER
 Group=$LUNARIUM_USER
 
