@@ -212,14 +212,14 @@ function create_key() {
   echo -e "Enter your ${RED}Masternode Private Key${NC}. Leave it blank to generate a new ${RED}Masternode Private Key${NC} for you:"
   read -e LUNARIUM_KEY
   if [[ -z "$LUNARIUM_KEY" ]]; then
-  su $LUNARIUM_USER -c "$LUNARIUM_DAEMON -conf=$LUNARIUM_FOLDER/$CONFIG_FILE -datadir=$LUNARIUM_FOLDER"
+  su $LUNARIUM_USER -c "$LUNARIUM_DAEMON -conf=$LUNARIUM_FOLDER/$CONFIG_FILE -datadir=$LUNARIUM_FOLDER -daemon"
   sleep 15
   if [ -z "$(ps axo user:15,cmd:100 | egrep ^$LUNARIUM_USER | grep $LUNARIUM_DAEMON)" ]; then
    echo -e "${RED}Lunariumd server couldn't start. Check /var/log/syslog for errors.{$NC}"
    exit 1
   fi
-  LUNARIUM_KEY=$(su $LUNARIUM_USER -c "$LUNARIUM_DAEMON -conf=$LUNARIUM_FOLDER/$CONFIG_FILE -datadir=$LUNARIUM_FOLDER masternode genkey")
-  su $LUNARIUM_USER -c "$LUNARIUM_DAEMON -conf=$LUNARIUM_FOLDER/$CONFIG_FILE -datadir=$LUNARIUM_FOLDER stop"
+  LUNARIUM_KEY=$(su $LUNARIUM_USER -c "$LUNARIUM_CLI -conf=$LUNARIUM_FOLDER/$CONFIG_FILE -datadir=$LUNARIUM_FOLDER masternode genkey")
+  su $LUNARIUM_USER -c "$LUNARIUM_CLI -conf=$LUNARIUM_FOLDER/$CONFIG_FILE -datadir=$LUNARIUM_FOLDER stop"
 fi
 }
 
