@@ -31,7 +31,7 @@ After the MN is up and running, you need to configure the desktop wallet accordi
 * Right click on **MN1** in the list
 * Click **Start Alias** in the popup menu
 11. Status should switch to **ENABLED**
-12. Done! Your should receive your first rewards shorty.
+12. Done! Your should receive your first rewards in the next 24 hours or less.
 
 ***
 
