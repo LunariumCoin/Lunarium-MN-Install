@@ -12,23 +12,26 @@ Shell script to install an [Lunarium Masternode](http://lunariumcoin.io/) on a L
 ## Desktop wallet setup  
 
 After the MN is up and running, you need to configure the desktop wallet accordingly. Here are the steps:  
-1. Open the Lunarium Coin Desktop Wallet.  
+1. Open the Lunarium Wallet.  
 2. Go to RECEIVE and create a New Address: **MN1**  
 3. Send **10000** XLN to **MN1**.  
-4. Wait for 15 confirmations.  
-5. Go to **Help -> "Debug window - Console"**  
-6. Type the following command: **masternode outputs**  
-7. Go to **Masternodes** tab  
-8. Click **Create** and fill the details:  
-* Alias: **MN1**  
-* Address: **VPS_IP:PORT**  
+4. Wait for 6 confirmations.
+5. Go to **Tools -> "Debug console"**  
+6. Type the following command: **masternode outputs**. Copy the values of **txhash** and **outputidx**.  
+7. Go to **Tools -> Open Masternode Configuration File**, add a new line with the format: ***alias IP:port privkey collateral_output_txid collateral_output_index***
+* Alias = **MN1**  
+* IP:port = **VPS_IP:44071**  
 * Privkey: **Masternode Private Key**  
-* TxHash: **First value from Step 6**  
+* collateral_output_txid: **First value from Step 6**  
 * Output index:  **Second value from Step 6**  
-* Reward address: leave blank  
-* Reward %: leave blank  
-9. Click **OK** to add the masternode  
-10. Click **Start All**  
+8. Click **File -> Save** to add the masternode
+9. Close the masternode.conf file.
+9. Restart Lunarium Wallet
+10. Go to **Masternodes** tab
+* Right click on **MN1** in the list
+* Click **Start Alias** in the popup menu
+11. Status should switch to **ENABLED**
+12. Done! Your should receive your first rewards shorty.
 
 ***
 
