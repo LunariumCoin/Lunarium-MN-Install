@@ -43,8 +43,8 @@ For security reasons **Lunarium** is installed under **lunarium** user, hence yo
 LUNARIUM_USER=lunarium #replace lunarium with the MN username you want to check
 
 su - $LUNARIUM_USER
-lunariumd masternode status
-lunariumd getinfo
+lunarium-cli masternode status
+lunarium-cli getinfo
 ```  
 
 Also, if you want to check/start/stop **Lunarium**, run one of the following commands as **root**:
