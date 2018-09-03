@@ -119,14 +119,14 @@ function copy_lunarium_binaries(){
   tar -xzf `basename $LUNARIUM_LATEST_RELEASE` --strip-components=2 >/dev/null
   cp lunarium-cli lunariumd lunarium-tx lunarium-qt /usr/local/bin >/dev/null
   chmod 755 /usr/local/bin/lunarium* >/dev/null
-  clear 
+  clear
 }
 
 function install_lunarium(){
   echo -e "Installing Lunarium files."
-  echo -e "${GREEN}You have the choice between the full compilation (long), or to use precompiled binaries instead.${NC}"
-  if [[ "no" == $(ask_yes_or_no "Do you want to perform a full compilation?") || \
-        "no" == $(ask_yes_or_no "Are you ${RED}really${NC} sure you want do a full compilation?") ]]
+  echo -e "${GREEN}You have the choice between source code compilation (slower), or to use precompiled binaries instead (faster).${NC}"
+  if [[ "no" == $(ask_yes_or_no "Do you want to perform source code compilation?") || \
+        "no" == $(ask_yes_or_no "Are you **really** sure you want compile the source code, it will take a while?") ]]
   then
     copy_lunarium_binaries
     clear
@@ -296,4 +296,3 @@ checks
 prepare_system
 install_lunarium
 setup_node
-
