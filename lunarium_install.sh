@@ -41,7 +41,6 @@ if [ -n "$(pidof $LUNARIUM_DAEMON)" ] || [ -e "$LUNARIUM_DAEMON" ] ; then
   echo -e "${GREEN}\c"
   echo -e "Lunarium is already installed. Exiting..."
   echo -e "{NC}"
-  clear
   exit 1
 fi
 }
@@ -125,9 +124,9 @@ function copy_lunarium_binaries(){
 
 function install_lunarium(){
   echo -e "Installing Lunarium files."
-  echo -e "You have the choice between the full compilation (long), or to use precompiled binaries instead."
+  echo -e "${GREEN}You have the choice between the full compilation (long), or to use precompiled binaries instead.${NC}"
   if [[ "no" == $(ask_yes_or_no "Do you want to perform a full compilation?") || \
-      "no" == $(ask_yes_or_no "Are you *really* sure you want do a full compilation?") ]]
+        "no" == $(ask_yes_or_no "Are you ${RED}really${NC} sure you want do a full compilation?") ]]
   then
     copy_lunarium_binaries
     clear
@@ -296,6 +295,5 @@ clear
 checks
 prepare_system
 install_lunarium
-#compile_lunarium
 setup_node
 
