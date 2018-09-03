@@ -5,6 +5,7 @@ CONFIG_FILE="lunarium.conf"
 LUNARIUM_DAEMON="/usr/local/bin/lunariumd"
 LUNARIUM_CLI="/usr/local/bin/lunarium-cli"
 LUNARIUM_REPO="https://github.com/LunariumCoin/lunarium.git"
+LUNARIUM_LATEST_RELEASE="https://github.com/LunariumCoin/lunarium/releases/download/v1.0.0/lunarium-1.0.0-x86_64-linux-gnu.tar.gz"
 DEFAULT_LUNARIUM_PORT=44071
 DEFAULT_LUNARIUM_RPC_PORT=44072
 DEFAULT_LUNARIUM_USER="lunarium"
@@ -40,7 +41,6 @@ if [ -n "$(pidof $LUNARIUM_DAEMON)" ] || [ -e "$LUNARIUM_DAEMON" ] ; then
   echo -e "${GREEN}\c"
   echo -e "Lunarium is already installed. Exiting..."
   echo -e "{NC}"
-  clear
   exit 1
 fi
 }
@@ -91,6 +91,14 @@ fi
 clear
 }
 
+function ask_yes_or_no() {
+  read -p "$1 ([Y]es or [N]o | ENTER): "
+    case $(echo $REPLY | tr '[A-Z]' '[a-z]') in
+        y|yes) echo "yes" ;;
+        *)     echo "no" ;;
+    esac
+}
+
 function compile_lunarium() {
   echo -e "Clone git repo and compile it. This may take some time."
   cd $TMP_FOLDER
@@ -104,6 +112,28 @@ function compile_lunarium() {
   cd ~
   rm -rf $TMP_FOLDER
   clear
+}
+
+function copy_lunarium_binaries(){
+  wget $LUNARIUM_LATEST_RELEASE >/dev/null
+  tar -xzf `basename $LUNARIUM_LATEST_RELEASE` --strip-components=2 >/dev/null
+  cp lunarium-cli lunariumd lunarium-tx lunarium-qt /usr/local/bin >/dev/null
+  chmod 755 /usr/local/bin/lunarium* >/dev/null
+  clear
+}
+
+function install_lunarium(){
+  echo -e "Installing Lunarium files."
+  echo -e "${GREEN}You have the choice between source code compilation (slower), or to use precompiled binaries instead (faster).${NC}"
+  if [[ "no" == $(ask_yes_or_no "Do you want to perform source code compilation?") || \
+        "no" == $(ask_yes_or_no "Are you **really** sure you want compile the source code, it will take a while?") ]]
+  then
+    copy_lunarium_binaries
+    clear
+  else
+    compile_lunarium
+    clear
+  fi
 }
 
 function enable_firewall() {
@@ -264,5 +294,5 @@ function setup_node() {
 clear
 checks
 prepare_system
-compile_lunarium
+install_lunarium
 setup_node
