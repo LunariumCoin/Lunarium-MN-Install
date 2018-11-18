@@ -126,7 +126,7 @@ function copy_lunarium_binaries(){
 
 function install_lunarium(){
   echo -e "Installing Lunarium files."
-  echo -e "${GREEN}You have the choice between source code compilation (slower), or to use precompiled binaries instead (faster).${NC}"
+  echo -e "${GREEN}You have the choice between source code compilation (slower and requries 4G of RAM or VPS that allows swap to be added), or to use precompiled binaries instead (faster).${NC}"
   if [[ "no" == $(ask_yes_or_no "Do you want to perform source code compilation?") || \
         "no" == $(ask_yes_or_no "Are you **really** sure you want compile the source code, it will take a while?") ]]
   then
