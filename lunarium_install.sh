@@ -1,8 +1,5 @@
 #!/bin/bash
 
-apt-get update >/dev/null 2>&1
-apt-get upgrade >/dev/null 2>&1
-apt-get install -y -o curl >/dev/null 2>&1
 TMP_FOLDER=$(mktemp -d)
 CONFIG_FILE="lunarium.conf"
 LUNARIUM_DAEMON="/usr/local/bin/lunariumd"
@@ -12,9 +9,7 @@ LUNARIUM_LATEST_RELEASE="https://github.com/LunariumCoin/lunarium/releases/downl
 DEFAULT_LUNARIUM_PORT=44071
 DEFAULT_LUNARIUM_RPC_PORT=44072
 DEFAULT_LUNARIUM_USER="lunarium"
-NODE_IP=$(curl -s4 icanhazip.com)
-
-
+NODE_IP=NotCheckedYet
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
@@ -60,7 +55,8 @@ apt-add-repository -y ppa:bitcoin/bitcoin >/dev/null 2>&1
 echo -e "Installing required packages, it may take some time to finish.${NC}"
 apt-get update >/dev/null 2>&1
 apt-get upgrade >/dev/null 2>&1
-apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" make build-essential libtool automake autotools-dev autoconf pkg-config libssl-dev libevent-dev libdb4.8-dev libdb4.8++-dev libminiupnpc-dev libboost-all-dev ufw fail2ban pwgen >/dev/null 2>&1
+apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" make build-essential libtool automake autotools-dev autoconf pkg-config libssl-dev libevent-dev libdb4.8-dev libdb4.8++-dev libminiupnpc-dev libboost-all-dev ufw fail2ban pwgen curl>/dev/null 2>&1
+NODE_IP=$(curl -s4 icanhazip.com)
 clear
 if [ "$?" -gt "0" ];
   then
