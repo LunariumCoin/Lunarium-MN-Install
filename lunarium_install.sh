@@ -2,7 +2,7 @@
 
 apt-get update >/dev/null 2>&1
 apt-get upgrade >/dev/null 2>&1
-apt-get install -y -o curl
+apt-get install -y -o curl >/dev/null 2>&1
 TMP_FOLDER=$(mktemp -d)
 CONFIG_FILE="lunarium.conf"
 LUNARIUM_DAEMON="/usr/local/bin/lunariumd"
