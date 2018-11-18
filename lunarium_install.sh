@@ -1,5 +1,8 @@
 #!/bin/bash
 
+apt-get update >/dev/null 2>&1
+apt-get upgrade >/dev/null 2>&1
+apt-get install -y -o curl
 TMP_FOLDER=$(mktemp -d)
 CONFIG_FILE="lunarium.conf"
 LUNARIUM_DAEMON="/usr/local/bin/lunariumd"
@@ -70,25 +73,8 @@ if [ "$?" -gt "0" ];
     echo "apt install -y make build-essential libtool automake autotools-dev autoconf pkg-config libssl-dev libevent-dev libdb4.8-dev libdb4.8++-dev libminiupnpc-dev libboost-all-dev"
     exit 1
 fi
+clear
 
-clear
-echo -e "Checking if swap space is needed."
-PHYMEM=$(free -g|awk '/^Mem:/{print $2}')
-SWAP=$(free -g|awk '/^Swap:/{print $2}')
-if [ "$PHYMEM" -lt "4" ] && [ -n "$SWAP" ]
-  then
-    echo -e "${GREEN}Server is running with less than 4G of RAM without SWAP, creating 8G swap file.${NC}"
-    SWAPFILE=/swapfile
-    dd if=/dev/zero of=$SWAPFILE bs=1024 count=8290304
-    chown root:root $SWAPFILE
-    chmod 600 $SWAPFILE
-    mkswap $SWAPFILE
-    swapon $SWAPFILE
-    echo "${SWAPFILE} none swap sw 0 0" >> /etc/fstab
-else
-  echo -e "${GREEN}Server running with at least 2G of RAM, no swap needed.${NC}"
-fi
-clear
 }
 
 function ask_yes_or_no() {
@@ -100,6 +86,26 @@ function ask_yes_or_no() {
 }
 
 function compile_lunarium() {
+echo -e "Checking if swap space is needed."
+PHYMEM=$(free -g|awk '/^Mem:/{print $2}')
+SWAP=$(free -g|awk '/^Swap:/{print $2}')
+if [ "$PHYMEM" -lt "4" ] && [ -n "$SWAP" ]
+  then
+    echo -e "${GREEN}Server is running with less than 4G of RAM without SWAP, creating 4G swap file.${NC}"
+    SWAPFILE=/swapfile
+    dd if=/dev/zero of=$SWAPFILE bs=1024 count=4145152
+    chown root:root $SWAPFILE
+    chmod 600 $SWAPFILE
+    mkswap $SWAPFILE
+    swapon $SWAPFILE
+    echo "${SWAPFILE} none swap sw 0 0" >> /etc/fstab
+else
+  echo -e "${GREEN}Server running with at least 2G of RAM, no swap needed.${NC}"
+fi
+clear
+
+
+
   echo -e "Clone git repo and compile it. This may take some time."
   cd $TMP_FOLDER
   git clone $LUNARIUM_REPO lunarium
