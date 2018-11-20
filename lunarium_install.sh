@@ -85,9 +85,9 @@ function compile_lunarium() {
 echo -e "Checking if swap space is needed."
 PHYMEM=$(free -g|awk '/^Mem:/{print $2}')
 SWAP=$(free -g|awk '/^Swap:/{print $2}')
-if [ "$PHYMEM" -lt "8" ] && [ -n "$SWAP" ]
+if [ "$PHYMEM" -lt "4" ] && [ -n "$SWAP" ]
   then
-    echo -e "${GREEN}Server is running with less than 8G of RAM without SWAP, creating 8G swap file.${NC}"
+    echo -e "${GREEN}Server is running with less than 4G of RAM without SWAP, creating 8G swap file.${NC}"
     SWAPFILE=/swapfile
     dd if=/dev/zero of=$SWAPFILE bs=1024 count=8388608
     chown root:root $SWAPFILE
@@ -96,7 +96,7 @@ if [ "$PHYMEM" -lt "8" ] && [ -n "$SWAP" ]
     swapon $SWAPFILE
     echo "${SWAPFILE} none swap sw 0 0" >> /etc/fstab
 else
-  echo -e "${GREEN}Server running with at least 8G of RAM, no swap needed.${NC}"
+  echo -e "${GREEN}Server running with at least 4G of RAM, no swap needed.${NC}"
 fi
 clear
 
