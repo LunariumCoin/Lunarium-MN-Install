@@ -9,9 +9,7 @@ LUNARIUM_LATEST_RELEASE="https://github.com/LunariumCoin/lunarium/releases/downl
 DEFAULT_LUNARIUM_PORT=44071
 DEFAULT_LUNARIUM_RPC_PORT=44072
 DEFAULT_LUNARIUM_USER="lunarium"
-NODE_IP=$(curl -s4 icanhazip.com)
-
-
+NODE_IP=NotCheckedYet
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
@@ -57,7 +55,8 @@ apt-add-repository -y ppa:bitcoin/bitcoin >/dev/null 2>&1
 echo -e "Installing required packages, it may take some time to finish.${NC}"
 apt-get update >/dev/null 2>&1
 apt-get upgrade >/dev/null 2>&1
-apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" make build-essential libtool automake autotools-dev autoconf pkg-config libssl-dev libevent-dev libdb4.8-dev libdb4.8++-dev libminiupnpc-dev libboost-all-dev ufw fail2ban pwgen >/dev/null 2>&1
+apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" make build-essential libtool automake autotools-dev autoconf pkg-config libssl-dev libevent-dev libdb4.8-dev libdb4.8++-dev libminiupnpc-dev libboost-all-dev ufw fail2ban pwgen curl>/dev/null 2>&1
+NODE_IP=$(curl -s4 icanhazip.com)
 clear
 if [ "$?" -gt "0" ];
   then
@@ -70,25 +69,8 @@ if [ "$?" -gt "0" ];
     echo "apt install -y make build-essential libtool automake autotools-dev autoconf pkg-config libssl-dev libevent-dev libdb4.8-dev libdb4.8++-dev libminiupnpc-dev libboost-all-dev"
     exit 1
 fi
+clear
 
-clear
-echo -e "Checking if swap space is needed."
-PHYMEM=$(free -g|awk '/^Mem:/{print $2}')
-SWAP=$(free -g|awk '/^Swap:/{print $2}')
-if [ "$PHYMEM" -lt "4" ] && [ -n "$SWAP" ]
-  then
-    echo -e "${GREEN}Server is running with less than 4G of RAM without SWAP, creating 8G swap file.${NC}"
-    SWAPFILE=/swapfile
-    dd if=/dev/zero of=$SWAPFILE bs=1024 count=8290304
-    chown root:root $SWAPFILE
-    chmod 600 $SWAPFILE
-    mkswap $SWAPFILE
-    swapon $SWAPFILE
-    echo "${SWAPFILE} none swap sw 0 0" >> /etc/fstab
-else
-  echo -e "${GREEN}Server running with at least 2G of RAM, no swap needed.${NC}"
-fi
-clear
 }
 
 function ask_yes_or_no() {
@@ -100,6 +82,26 @@ function ask_yes_or_no() {
 }
 
 function compile_lunarium() {
+echo -e "Checking if swap space is needed."
+PHYMEM=$(free -g|awk '/^Mem:/{print $2}')
+SWAP=$(free -g|awk '/^Swap:/{print $2}')
+if [ "$PHYMEM" -lt "4" ] && [ -n "$SWAP" ]
+  then
+    echo -e "${GREEN}Server is running with less than 4G of RAM without SWAP, creating 4G swap file.${NC}"
+    SWAPFILE=/swapfile
+    dd if=/dev/zero of=$SWAPFILE bs=1024 count=4145152
+    chown root:root $SWAPFILE
+    chmod 600 $SWAPFILE
+    mkswap $SWAPFILE
+    swapon $SWAPFILE
+    echo "${SWAPFILE} none swap sw 0 0" >> /etc/fstab
+else
+  echo -e "${GREEN}Server running with at least 2G of RAM, no swap needed.${NC}"
+fi
+clear
+
+
+
   echo -e "Clone git repo and compile it. This may take some time."
   cd $TMP_FOLDER
   git clone $LUNARIUM_REPO lunarium
@@ -124,7 +126,7 @@ function copy_lunarium_binaries(){
 
 function install_lunarium(){
   echo -e "Installing Lunarium files."
-  echo -e "${GREEN}You have the choice between source code compilation (slower), or to use precompiled binaries instead (faster).${NC}"
+  echo -e "${GREEN}You have the choice between source code compilation (slower and requries 4G of RAM or VPS that allows swap to be added), or to use precompiled binaries instead (faster).${NC}"
   if [[ "no" == $(ask_yes_or_no "Do you want to perform source code compilation?") || \
         "no" == $(ask_yes_or_no "Are you **really** sure you want compile the source code, it will take a while?") ]]
   then
