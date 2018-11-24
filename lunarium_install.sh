@@ -5,7 +5,7 @@ CONFIG_FILE="lunarium.conf"
 LUNARIUM_DAEMON="/usr/local/bin/lunariumd"
 LUNARIUM_CLI="/usr/local/bin/lunarium-cli"
 LUNARIUM_REPO="https://github.com/LunariumCoin/lunarium.git"
-LUNARIUM_LATEST_RELEASE="https://github.com/LunariumCoin/lunarium/releases/download/v1.0.0/lunarium-1.0.0-x86_64-linux-gnu.tar.gz"
+LUNARIUM_LATEST_RELEASE="https://github.com/LunariumCoin/lunarium/releases/download/v1.0.2/lunarium-1.0.2-x86_64-linux-gnu.tar.gz"
 DEFAULT_LUNARIUM_PORT=44071
 DEFAULT_LUNARIUM_RPC_PORT=44072
 DEFAULT_LUNARIUM_USER="lunarium"
@@ -55,7 +55,7 @@ apt-add-repository -y ppa:bitcoin/bitcoin >/dev/null 2>&1
 echo -e "Installing required packages, it may take some time to finish.${NC}"
 apt-get update >/dev/null 2>&1
 apt-get upgrade >/dev/null 2>&1
-apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" make build-essential libtool automake autotools-dev autoconf pkg-config libssl-dev libevent-dev libdb4.8-dev libdb4.8++-dev libminiupnpc-dev libboost-all-dev ufw fail2ban pwgen curl>/dev/null 2>&1
+apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" git make build-essential libtool automake autotools-dev autoconf pkg-config libssl-dev libevent-dev libdb4.8-dev libdb4.8++-dev libminiupnpc-dev libboost-all-dev ufw fail2ban pwgen curl>/dev/null 2>&1
 NODE_IP=$(curl -s4 icanhazip.com)
 clear
 if [ "$?" -gt "0" ];
@@ -66,7 +66,7 @@ if [ "$?" -gt "0" ];
     echo "apt -y install software-properties-common"
     echo "apt-add-repository -y ppa:bitcoin/bitcoin"
     echo "apt-get update"
-    echo "apt install -y make build-essential libtool automake autotools-dev autoconf pkg-config libssl-dev libevent-dev libdb4.8-dev libdb4.8++-dev libminiupnpc-dev libboost-all-dev"
+    echo "apt install -y git make build-essential libtool automake autotools-dev autoconf pkg-config libssl-dev libevent-dev libdb4.8-dev libdb4.8++-dev libminiupnpc-dev libboost-all-dev"
     exit 1
 fi
 clear
@@ -87,16 +87,16 @@ PHYMEM=$(free -g|awk '/^Mem:/{print $2}')
 SWAP=$(free -g|awk '/^Swap:/{print $2}')
 if [ "$PHYMEM" -lt "4" ] && [ -n "$SWAP" ]
   then
-    echo -e "${GREEN}Server is running with less than 4G of RAM without SWAP, creating 4G swap file.${NC}"
+    echo -e "${GREEN}Server is running with less than 4G of RAM without SWAP, creating 8G swap file.${NC}"
     SWAPFILE=/swapfile
-    dd if=/dev/zero of=$SWAPFILE bs=1024 count=4145152
+    dd if=/dev/zero of=$SWAPFILE bs=1024 count=8388608
     chown root:root $SWAPFILE
     chmod 600 $SWAPFILE
     mkswap $SWAPFILE
     swapon $SWAPFILE
     echo "${SWAPFILE} none swap sw 0 0" >> /etc/fstab
 else
-  echo -e "${GREEN}Server running with at least 2G of RAM, no swap needed.${NC}"
+  echo -e "${GREEN}Server running with at least 4G of RAM, no swap needed.${NC}"
 fi
 clear
 
