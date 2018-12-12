@@ -45,6 +45,7 @@ LUNARIUM_USER=lunarium #replace lunarium with the MN username you want to check
 su - $LUNARIUM_USER
 lunarium-cli masternode status
 lunarium-cli getinfo
+exit # back to root user
 ```  
 
 Also, if you want to check/start/stop **Lunarium**, run one of the following commands as **root**:
