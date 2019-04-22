@@ -18,10 +18,10 @@ After the MN is up and running, you need to configure the desktop wallet accordi
 4. Wait for 6 confirmations.
 5. Go to **Tools -> "Debug console"**  
 6. Type the following command: **masternode outputs**. Copy the values of **txhash** and **outputidx**.  
-7. Go to **Tools -> Open Masternode Configuration File**, add a new line with the format: ***alias IP:port privkey collateral_output_txid collateral_output_index***
+7. Go to **Tools -> Open Masternode Configuration File**, add a new line with the format: ***alias IP:port genkey collateral_output_txid collateral_output_index***
 * Alias = **MN1**  
 * IP:port = **VPS_IP:44071**  
-* Privkey: **Masternode Private Key**  
+* Privkey: **Masternode Genkey provided by the script in the installation step above**  
 * collateral_output_txid: **First value from Step 6**  
 * Output index:  **Second value from Step 6**  
 8. Click **File -> Save** to add the masternode
@@ -37,26 +37,24 @@ After the MN is up and running, you need to configure the desktop wallet accordi
 
 ## Usage:  
 
-For security reasons **Lunarium** is installed under **lunarium** user, hence you need to **su - lunarium** before checking:    
+For security reasons **Lunarium** is installed under **lunarium** user, hence you need to **su lunarium** before checking:    
 
 ```
-LUNARIUM_USER=lunarium #replace lunarium with the MN username you want to check
+If not installed using default username lunarium, please replace lunarium with your actual username.   
 
-su - $LUNARIUM_USER
-lunarium-cli masternode status
-lunarium-cli getinfo
-exit # back to root user
+su lunarium  
+lunarium-cli masternode status  
+lunarium-cli getinfo  
+exit # back to root user  
 ```  
 
 Also, if you want to check/start/stop **Lunarium**, run one of the following commands as **root**:
 
 ```
-LUNARIUM_USER=lunarium  #replace lunarium with the MN username you want to check  
-
-systemctl status $LUNARIUM_USER #To check the service is running.  
-systemctl start $LUNARIUM_USER #To start Lunarium service.  
-systemctl stop $LUNARIUM_USER #To stop Lunarium service.  
-systemctl is-enabled $LUNARIUM_USER #To check whetether Lunarium service is enabled on boot or not.  
+systemctl status lunarium #To check the service is running.  
+systemctl start lunarium.service #To start Lunarium service.  
+systemctl stop lunarium.service #To stop Lunarium service.  
+systemctl is-enabled lunarium #To check whetether Lunarium service is enabled on boot or not.  
 ```  
 
 ***
