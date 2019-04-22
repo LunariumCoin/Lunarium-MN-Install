@@ -52,8 +52,8 @@ Also, if you want to check/start/stop **Lunarium**, run one of the following com
 
 ```
 systemctl status lunarium #To check the service is running.  
-systemctl start lunarium #To start Lunarium service.  
-systemctl stop lunarium #To stop Lunarium service.  
+systemctl start lunarium.service #To start Lunarium service.  
+systemctl stop lunarium.service #To stop Lunarium service.  
 systemctl is-enabled lunarium #To check whetether Lunarium service is enabled on boot or not.  
 ```  
 
