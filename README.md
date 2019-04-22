@@ -18,10 +18,10 @@ After the MN is up and running, you need to configure the desktop wallet accordi
 4. Wait for 6 confirmations.
 5. Go to **Tools -> "Debug console"**  
 6. Type the following command: **masternode outputs**. Copy the values of **txhash** and **outputidx**.  
-7. Go to **Tools -> Open Masternode Configuration File**, add a new line with the format: ***alias IP:port privkey collateral_output_txid collateral_output_index***
+7. Go to **Tools -> Open Masternode Configuration File**, add a new line with the format: ***alias IP:port genkey collateral_output_txid collateral_output_index***
 * Alias = **MN1**  
 * IP:port = **VPS_IP:44071**  
-* Privkey: **Masternode Private Key**  
+* Privkey: **Masternode Genkey provided by the script in the installation step above**  
 * collateral_output_txid: **First value from Step 6**  
 * Output index:  **Second value from Step 6**  
 8. Click **File -> Save** to add the masternode
@@ -51,7 +51,7 @@ exit # back to root user
 Also, if you want to check/start/stop **Lunarium**, run one of the following commands as **root**:
 
 ```
-LUNARIUM_USER=lunarium  #replace lunarium with the MN username you want to check  
+LUNARIUM_USER=lunarium if using default username when installing. 
 
 systemctl status $LUNARIUM_USER #To check the service is running.  
 systemctl start $LUNARIUM_USER #To start Lunarium service.  
