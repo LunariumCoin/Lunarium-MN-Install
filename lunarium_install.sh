@@ -5,6 +5,7 @@ CONFIG_FILE="lunarium.conf"
 LUNARIUM_DAEMON="/usr/local/bin/lunariumd"
 LUNARIUM_CLI="/usr/local/bin/lunarium-cli"
 LUNARIUM_REPO="https://github.com/LunariumCoin/lunarium.git"
+LUNARIUM_BRANCH="fix-ubuntu-compilation"
 LUNARIUM_LATEST_RELEASE="https://github.com/LunariumCoin/lunarium/releases/download/v1.2.0/lunarium-1.2.0-x86_64-linux-gnu.tar.gz"
 DEFAULT_LUNARIUM_PORT=44071
 DEFAULT_LUNARIUM_RPC_PORT=44072
@@ -13,7 +14,15 @@ NODE_IP=NotCheckedYet
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
+STDOUT=""
+CLEAR=""
+DEBUG="1"
 
+if [ "${DEGUG}" -ne "1" ]
+ then
+    STDOUT=">/dev/null 2>&1"
+    CLEAR=clear
+fi
 
 function compile_error() {
 if [ "$?" -gt "0" ];
@@ -25,8 +34,8 @@ fi
 
 
 function checks() {
-if [[ $(lsb_release -d) != *16.04* ]]; then
-  echo -e "${RED}You are not running Ubuntu 16.04. Installation is cancelled.${NC}"
+if [[ $(lsb_release -d) != *18* ]]; then
+  echo -e "${RED}You are not running Ubuntu 18. Installation is cancelled.${NC}"
   exit 1
 fi
 
@@ -46,18 +55,18 @@ fi
 function prepare_system() {
 
 echo -e "Prepare the system to install Lunarium master node."
-apt-get update >/dev/null 2>&1
-DEBIAN_FRONTEND=noninteractive apt-get update > /dev/null 2>&1
-DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y -qq upgrade >/dev/null 2>&1
-apt install -y software-properties-common >/dev/null 2>&1
+apt-get update ${STDOUT}
+DEBIAN_FRONTEND=noninteractive apt-get update ${STDOUT}
+DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y -qq upgrade ${STDOUT}
+apt install -y software-properties-common ${STDOUT}
 echo -e "${GREEN}Adding bitcoin PPA repository"
-apt-add-repository -y ppa:bitcoin/bitcoin >/dev/null 2>&1
+apt-add-repository -y ppa:bitcoin/bitcoin ${STDOUT}
 echo -e "Installing required packages, it may take some time to finish.${NC}"
-apt-get update >/dev/null 2>&1
-apt-get upgrade >/dev/null 2>&1
-apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" git make build-essential libtool automake autotools-dev autoconf pkg-config libssl-dev libevent-dev libdb4.8-dev libdb4.8++-dev libminiupnpc-dev libboost-all-dev ufw fail2ban pwgen curl>/dev/null 2>&1
+apt-get update ${STDOUT}
+apt-get upgrade ${STDOUT}
+apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" git make build-essential libtool automake autotools-dev autoconf pkg-config libssl-dev libevent-dev libdb4.8-dev libdb4.8++-dev libminiupnpc-dev libboost-all-dev ufw fail2ban pwgen curl ${STDOUT}
 NODE_IP=$(curl -s4 icanhazip.com)
-clear
+${CLEAR}
 if [ "$?" -gt "0" ];
   then
     echo -e "${RED}Not all required packages were installed properly. Try to install them manually by running the following commands:${NC}\n"
@@ -66,10 +75,10 @@ if [ "$?" -gt "0" ];
     echo "apt -y install software-properties-common"
     echo "apt-add-repository -y ppa:bitcoin/bitcoin"
     echo "apt-get update"
-    echo "apt install -y git make build-essential libtool automake autotools-dev autoconf pkg-config libssl-dev libevent-dev libdb4.8-dev libdb4.8++-dev libminiupnpc-dev libboost-all-dev"
+    echo "apt install -y git make build-essential libtool automake autotools-dev autoconf pkg-config libssl1.0-dev libevent-dev libdb4.8-dev libdb4.8++-dev libminiupnpc-dev libboost-all-dev"
     exit 1
 fi
-clear
+${CLEAR}
 
 }
 
@@ -98,7 +107,7 @@ if [ "$PHYMEM" -lt "4" ] && [ -n "$SWAP" ]
 else
   echo -e "${GREEN}Server running with at least 4G of RAM, no swap needed.${NC}"
 fi
-clear
+${CLEAR}
 
 
 
@@ -106,6 +115,7 @@ clear
   cd $TMP_FOLDER
   git clone $LUNARIUM_REPO lunarium
   cd lunarium
+  git checkout $LUNARIUM_BRANCH
   ./autogen.sh
   ./configure
   make
@@ -113,15 +123,15 @@ clear
   make install
   cd ~
   rm -rf $TMP_FOLDER
-  clear
+  ${CLEAR}
 }
 
 function copy_lunarium_binaries(){
-  wget $LUNARIUM_LATEST_RELEASE >/dev/null
-  tar -xzf `basename $LUNARIUM_LATEST_RELEASE` --strip-components=2 >/dev/null
-  cp lunarium-cli lunariumd lunarium-tx lunarium-qt /usr/local/bin >/dev/null
-  chmod 755 /usr/local/bin/lunarium* >/dev/null
-  clear
+  wget $LUNARIUM_LATEST_RELEASE ${STDOUT}
+  tar -xzf `basename $LUNARIUM_LATEST_RELEASE` --strip-components=2 ${STDOUT}
+  cp lunarium-cli lunariumd lunarium-tx lunarium-qt /usr/local/bin ${STDOUT}
+  chmod 755 /usr/local/bin/lunarium* ${STDOUT}
+  ${CLEAR}
 }
 
 function install_lunarium(){
@@ -131,22 +141,22 @@ function install_lunarium(){
         "no" == $(ask_yes_or_no "Are you **really** sure you want compile the source code, it will take a while?") ]]
   then
     copy_lunarium_binaries
-    clear
+    ${CLEAR}
   else
     compile_lunarium
-    clear
+    ${CLEAR}
   fi
 }
 
 function enable_firewall() {
   echo -e "Installing fail2ban and setting up firewall to allow ingress on port ${GREEN}$LUNARIUM_PORT${NC}"
-  ufw allow $LUNARIUM_PORT/tcp comment "Lunarium MN port" >/dev/null
-  ufw allow ssh comment "SSH" >/dev/null 2>&1
-  ufw limit ssh/tcp >/dev/null 2>&1
-  ufw default allow outgoing >/dev/null 2>&1
-  echo "y" | ufw enable >/dev/null 2>&1
-  systemctl enable fail2ban >/dev/null 2>&1
-  systemctl start fail2ban >/dev/null 2>&1
+  ufw allow $LUNARIUM_PORT/tcp comment "Lunarium MN port" ${STDOUT}
+  ufw allow ssh comment "SSH" ${STDOUT}
+  ufw limit ssh/tcp ${STDOUT}
+  ufw default allow outgoing ${STDOUT}
+  echo "y" | ufw enable ${STDOUT}
+  systemctl enable fail2ban ${STDOUT}
+  systemctl start fail2ban ${STDOUT}
 }
 
 function systemd_lunarium() {
@@ -199,9 +209,9 @@ function ask_user() {
     read -p "Configuration folder: " -i $DEFAULT_LUNARIUM_FOLDER -e LUNARIUM_FOLDER
     : ${LUNARIUM_FOLDER:=$DEFAULT_LUNARIUM_FOLDER}
     mkdir -p $LUNARIUM_FOLDER
-    chown -R $LUNARIUM_USER: $LUNARIUM_FOLDER >/dev/null
+    chown -R $LUNARIUM_USER: $LUNARIUM_FOLDER ${STDOUT}
   else
-    clear
+    ${CLEAR}
     echo -e "${RED}User exits. Please enter another username: ${NC}"
     ask_user
   fi
@@ -213,7 +223,7 @@ function check_port() {
   ask_port
 
   while [[ ${PORTS[@]} =~ $LUNARIUM_PORT ]] || [[ ${PORTS[@]} =~ $[LUNARIUM_PORT+1] ]]; do
-    clear
+    ${CLEAR}
     echo -e "${RED}Port in use, please choose another port:${NF}"
     ask_port
   done
@@ -263,7 +273,7 @@ masternode=1
 masternodeaddr=$NODE_IP:$LUNARIUM_PORT
 masternodeprivkey=$LUNARIUM_KEY
 EOF
-  chown -R $LUNARIUM_USER: $LUNARIUM_FOLDER >/dev/null
+  chown -R $LUNARIUM_USER: $LUNARIUM_FOLDER ${STDOUT}
 }
 
 function important_information() {
